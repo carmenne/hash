@@ -10,24 +10,25 @@
 #define CMP(x, y) strncmp(x, y, strlen(y))
 
 typedef enum {ADD, REMOVE, FIND, CLEAR, PRINT_BUCKET, PRINT, RESIZE} command_type;
-void execute_command(FILE *pFile, bucket **hashtable, int size);
+void execute_command(FILE *pFile, bucket **hashtable, unsigned int size);
 command_type get_command(char *c);
 FILE *get_file(char* filename);
-
+char *copy_str(char *input);
 int main(int argc, char **argv)
 {
 	DIE(argc < 2, "Please enter the initial length of hashtable:\n");
 	
-	int i = 0; // itearates through args
-	int size = 0;
+	int i = 2; // itearates through args
+	unsigned int size = 0;
 	bucket **hashtable;
 	
 	size = atoi(argv[1]);
-	
+
 	// create the hashtable
 	hashtable = create_hashtable(size);
 	
 	FILE *pFile;
+	
 	
 	if (argc == 2) {
 		// there are no optional parameters, read from stdin
@@ -45,80 +46,88 @@ int main(int argc, char **argv)
 	}
 }
 
-void execute_command(FILE *pFile, bucket **hashtable, int size)
+void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 {
 	char command_name[COMMAND_SIZE];
 	FILE *pFile_out;
 
-	char* r = fgets (command_name, COMMAND_SIZE , pFile);
+	DIE(!pFile, "Error with input file");
 	
-	DIE (r < 0, "Error when reading file.\n");
+	while(fgets(command_name, COMMAND_SIZE , pFile)) {
 	
-	char *token = strtok(command_name, " ");
-	DIE (!token, "Invalid command.\n");
-	
-	command_type command = get_command(token);
-	printf("Command is: %d", command);
+		char *token = strtok(command_name,"\r\n");
+		token = strtok(command_name, " ");
+		DIE (!token, "Invalid command.\n");
+		
+		command_type command = get_command(token);
 
-	token = strtok( NULL, " ");
-	
-	switch(command) {
-		case ADD :
-			DIE (!token, "Please provide the word to be added.\n");
-			
-			add_hash(token, hashtable, size);
-			break;
+		token = strtok(NULL, " ");
+		printf("Second Token: %s\n", token);
 		
-		case REMOVE :
-			DIE (!token, "Please provide the word to be removed.\n");			
+		switch(command) {
+			case ADD :
+				DIE (!token, "Please provide the word to be added.\n");
+				
+				add_hash(token, hashtable, size);
+				break;
 			
-			remove_hash(token, hashtable, size);
-			break;
-		
-		case CLEAR :
-			clear_hash(hashtable);
-			break;
+			case REMOVE :
+				DIE (!token, "Please provide the word to be removed.\n");			
+				
+				remove_hash(token, hashtable, size);
+				break;
 			
-		case RESIZE :
-			resize_hash("double", hashtable);
-			break;
-		
-		case FIND :
-			DIE (!token, "Please provide the word to be found.\n");		
+			case CLEAR :
+				clear_hash(hashtable);
+				break;
+				
+			case RESIZE :
+				resize_hash("double", hashtable);
+				break;
 			
-			// file ouput is the 3rd argument, split again
-			token = strtok( NULL, " ");
-			pFile_out = get_file(token);
+			case FIND :
+				DIE (!token, "Please provide the word to be found.\n");		
+				
+				// file ouput is the 3rd argument, split again
+				token = strtok( NULL, " ");
+				pFile_out = get_file(copy_str(token));
+				
+				find_hash(token, hashtable, size, pFile_out);
+				
+				fclose(pFile_out);
+				break;
 			
-			find_hash(token, hashtable, size, pFile_out);
+			case PRINT :
+				// file ouput is the 2nd argument (already splitted)
 			
-			fclose(pFile_out);
-			break;
-		
-		case PRINT :
-			// file ouput is the 2nd argument (already splitted)
-			pFile_out = get_file(token);
+				pFile_out = get_file(copy_str(token));
+				
+				DIE(!pFile_out, "Error with writing to file or stdout");
+				
+				print(hashtable, pFile_out, size);
+								
+				fclose(pFile_out);
+				break;
+				
+			case PRINT_BUCKET :
 			
-			print(hashtable, pFile_out);
-			
-			fclose(pFile_out);
-			break;
-			
-		case PRINT_BUCKET :
-		
-			DIE (!token, "Please provide the Bucket Index.\n");
-			
-			// file ouput is the 3rd argument, split again
-			token = strtok( NULL, " ");
-			pFile_out = get_file(token);
-			
-			int index = atoi(token);
-			print_bucket(index, hashtable, pFile_out);
-			
-			fclose(pFile_out);
-			break;	
-	}
-	
+				DIE (!token, "Please provide the Bucket Index.\n");
+				
+				int index = atoi(token);
+				
+				DIE (index < 0, "Please provide a positive Bucket Index.\n");
+				
+				// file ouput is the 3rd argument, split again
+				token = strtok( NULL, " ");
+
+				pFile_out = get_file(copy_str(token));
+				
+				print_bucket(index, hashtable, pFile_out);
+				
+				fclose(pFile_out);
+				break;	
+		}
+}
 }
 
 command_type get_command(char *c)
@@ -139,17 +148,26 @@ command_type get_command(char *c)
 		return RESIZE;				
 }
 
-FILE *get_file(char* filename)
+FILE *get_file(char* f)
 {
+
 	FILE *fp;
-	if (filename == NULL)
+	if (f == NULL)
 	{
 		fp = stdout;
 	} else {
-		fp = fopen (filename, "a");
+		fp = fopen (f, "a");
 					
 		DIE(!fp, "Error when opening the file to write");
 	}
 	
 	return fp;
+}
+
+char *copy_str(char *input)
+{
+	int len = strlen(input);
+	char output[len];
+	strncpy(output, input, len);
+	return output;
 }
