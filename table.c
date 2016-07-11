@@ -68,13 +68,37 @@ void remove_hash(char *token, bucket **hashtable, unsigned int size)
 	
 }
 
-void clear_hash(bucket **hashtable)
+void clear_hash(bucket **hashtable, int size)
 {
+	int index = 0;
+	bucket *tmp;
 
+	while (index < size)
+	{
+		if (hashtable[index])
+		{
+			bucket *current = hashtable[index];
+			while(current->next) {
+				tmp = current->next;
+				free(current);
+				current = tmp;
+			}
+			if (current != NULL)
+				free(current);
+		}
+		hashtable[index] = NULL;
+		index++;
+	}
 }
-void resize_hash(char *type, bucket **hashtable)
+void resize_hash(char *type, bucket **hashtable, int size)
 {
+	bucket **copy;
+	if (strcmp(type, "double") == 0)
+		copy = create_hashtable(2 * size);
+	else
+		copy = create_hashtable(size / 2);
 	
+		
 }
 void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *fp)
 {

@@ -76,11 +76,11 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				break;
 			
 			case CLEAR :
-				clear_hash(hashtable);
+				clear_hash(hashtable, size);
 				break;
 				
 			case RESIZE :
-				resize_hash("double", hashtable);
+				resize_hash(token, hashtable, size);
 				break;
 			
 			case FIND :
