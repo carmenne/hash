@@ -90,23 +90,47 @@ void clear_hash(bucket **hashtable, int size)
 		index++;
 	}
 }
-void resize_hash(char *type, bucket **hashtable, int size)
+bucket** resize_hash(char *type, bucket **hashtable, int size)
 {
 	bucket **copy;
-	if (strcmp(type, "double") == 0)
-		copy = create_hashtable(2 * size);
-	else
-		copy = create_hashtable(size / 2);
+	int index = 0;
+	int new_size = 0;
+	printf("resize\n");
 	
-		
+	if (strcmp(type, "double") == 0)
+		new_size = 2 * size;
+	else
+		new_size = size / 2;
+	
+	copy = create_hashtable(new_size);
+
+	while (index < size)
+	{
+		if (hashtable[index])
+		{
+			bucket *current = hashtable[index];
+			while(current) {
+				add_hash(current->word, copy, new_size);
+				current = current->next;
+			}
+		}
+		index++;
+	}
+	
+	clear_hash(hashtable, size);
+	return copy;
 }
 void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *fp)
 {
-	if (is_present(token, hashtable, size) == 0)
-		fputs("False\n", fp);
-	else
+	if (is_present(token, hashtable, size) == 0) {
+		fputs("False\n", fp); 
+	} else {
 		fputs("True\n", fp);
+	}
+		
+	fflush(fp);	
 }
+
 void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 {
 	int index = 0;
@@ -116,7 +140,7 @@ void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 		if (hashtable[index])
 		{
 			print_bucket(index, hashtable, fp);
-			fputs("\n", fp);
+			// fputs("\n", fp);
 		}
 		index++;
 	}
@@ -132,6 +156,8 @@ void print_bucket(int index, bucket **hashtable, FILE *fp)
 				current = current->next;
 			}
 		}
+		fputs("\n", fp);
+		fflush(fp);
 }
 
 // Helper functions

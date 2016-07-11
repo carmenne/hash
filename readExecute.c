@@ -56,13 +56,15 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 		char *clean_line = strtok(command_name, "\r\n");
 
 		char *token = strtok(clean_line, " ");
-		DIE (!token, "Invalid command.\n");
+		if (!token)
+			continue;
 		// printf("Command:%s\n", token);
 		
 		command_type command = get_command(token);
 		
 		token = strtok(NULL, " ");
 		// printf("Param:%s\n", token);
+	
 		
 		switch(command) {
 			case ADD :
@@ -80,23 +82,31 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				break;
 				
 			case RESIZE :
-				resize_hash(token, hashtable, size);
+				hashtable = resize_hash(token, hashtable, size);
+				if (strcmp(token, "double") == 0)
+					size = 2 * size;
+				else
+					size = size / 2;
 				break;
 			
 			case FIND :
 				DIE (!token, "Please provide the word to be found.\n");		
 				
 				// file ouput is the 3rd argument, split again
+				
+				char *to_f = copy(token);
+				printf("%s\n", token);
+				printf("%s\n", to_f);
 				token = strtok( NULL, " ");
 				pFile_out = get_file(token);
 				
-				find_hash(token, hashtable, size, pFile_out);
+				
+				find_hash(to_f, hashtable, size, pFile_out);
 				
 				break;
 			
 			case PRINT :
 				// file ouput is the 2nd argument (already splitted)
-
 				pFile_out = get_file(token);
 				
 				DIE(!pFile_out, "Error with writing to file or stdout");
@@ -161,4 +171,12 @@ FILE *get_file(char* f)
 	}
 	
 	return fp;
+}
+
+copy(char *t)
+{
+	int len = strlen(t);
+	char *to_f = malloc(len);
+	strncpy(to_f, t, len);
+	return to_f;
 }
