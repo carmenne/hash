@@ -168,6 +168,7 @@ bucket *create_bucket(char *w)
 	int len = strlen(w);
 	b->word = malloc(len);
 	strncpy(b->word, w, len);
+	b->word[len] = NULL;
 
 	b->next = 0;
 	return b;
@@ -181,6 +182,7 @@ void add_node(char *w, bucket* current)
 	int len = strlen(w);
 	current->next->word = malloc(len);
 	strncpy(current->next->word, w, len);
+	current->next->word[len] = NULL;
 
 	current->next->next = 0;
 	current = current->next;

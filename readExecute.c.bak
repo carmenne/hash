@@ -97,8 +97,7 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				// file ouput is the 3rd argument, split again
 				
 				char *to_f = copy(token);
-				printf("%s\n", token);
-				printf("%s\n", to_f);
+
 				token = strtok( NULL, " ");
 				pFile_out = get_file(token);
 				

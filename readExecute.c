@@ -18,7 +18,7 @@ char *copy(char *t);
 
 int main(int argc, char **argv)
 {
-	DIE(argc < 2, "Please enter the initial length of hashtable:\n");
+	DIE(argc < 2, "Please enter the initial length of hashtable.\n");
 	
 	int i = 2; // itearates through args
 	unsigned int size = 0;

@@ -142,19 +142,19 @@ void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 		}
 		index++;
 	}
-	fputs("\n", fp);
+		fputs("\n", fp);
 }
 void print_bucket(int index, bucket **hashtable, FILE *fp)
 {
 		if (hashtable[index])
 		{
 			bucket *current = hashtable[index];
-			while(current) {
+			while(current->next) {
 				fputs(current->word, fp);
 				fputs(" ", fp);
 				current = current->next;
 			}
-			// fputs(current->word, fp);
+			fputs(current->word, fp);
 		}
 		fputs("\n", fp);
 		fflush(fp);
@@ -168,6 +168,7 @@ bucket *create_bucket(char *w)
 	int len = strlen(w);
 	b->word = malloc(len);
 	strncpy(b->word, w, len);
+	b[len] = NULL;
 
 	b->next = 0;
 	return b;
@@ -181,6 +182,7 @@ void add_node(char *w, bucket* current)
 	int len = strlen(w);
 	current->next->word = malloc(len);
 	strncpy(current->next->word, w, len);
+	current->next->word[len] = NULL;
 
 	current->next->next = 0;
 	current = current->next;
