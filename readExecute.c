@@ -55,8 +55,7 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 	
 	while(fgets(command_name, COMMAND_SIZE , pFile)) {
 	
-		char *token = strtok(command_name,"\r\n");
-		token = strtok(command_name, " ");
+		char *token = strtok(command_name, " \n");
 		DIE (!token, "Invalid command.\n");
 		
 		command_type command = get_command(token);
@@ -89,7 +88,7 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				
 				// file ouput is the 3rd argument, split again
 				token = strtok( NULL, " ");
-				pFile_out = get_file(copy_str(token));
+				pFile_out = get_file(token);
 				
 				find_hash(token, hashtable, size, pFile_out);
 				
@@ -99,11 +98,11 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 			case PRINT :
 				// file ouput is the 2nd argument (already splitted)
 			
-				pFile_out = get_file(copy_str(token));
+				pFile_out = get_file(token);
 				
 				DIE(!pFile_out, "Error with writing to file or stdout");
 				
-				print(hashtable, pFile_out, size);
+				print_hash(hashtable, pFile_out, size);
 								
 				fclose(pFile_out);
 				break;
@@ -119,7 +118,7 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				// file ouput is the 3rd argument, split again
 				token = strtok( NULL, " ");
 
-				pFile_out = get_file(copy_str(token));
+				pFile_out = get_file(token);
 				
 				print_bucket(index, hashtable, pFile_out);
 				
@@ -161,12 +160,4 @@ FILE *get_file(char* f)
 	}
 	
 	return fp;
-}
-
-char *copy_str(char *input)
-{
-	int len = strlen(input);
-	char output[len];
-	strncpy(output, input, len);
-	return output;
 }

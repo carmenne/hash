@@ -29,6 +29,7 @@ void add_hash(char *token, bucket **hashtable, unsigned int size)
 			current = current->next;
 		}
 		
+		// TO DO : Check that the word is not present already
 		add_node(token, current);
 	}
 	
@@ -49,7 +50,7 @@ void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *pFile_o
 {
 	
 }
-void print(bucket **hashtable, FILE *pFile_out, unsigned int size)
+void print_hash(bucket **hashtable, FILE *pFile_out, unsigned int size)
 {
 	int index = 0;
 
@@ -58,8 +59,8 @@ void print(bucket **hashtable, FILE *pFile_out, unsigned int size)
 		if (hashtable[index])
 		{
 			print_bucket(index, hashtable, pFile_out);
-			index++;
 		}
+		index++;
 	}
 }
 void print_bucket(int index, bucket **hashtable, FILE *pFile)
@@ -72,8 +73,9 @@ void print_bucket(int index, bucket **hashtable, FILE *pFile)
 				fputs(" ", pFile);
 				current = current->next;
 			}
-		fputs("\n", pFile);
-	}
+			fputs("\n", pFile);
+		}
+		
 }
 
 // Helper functions
@@ -98,5 +100,6 @@ void add_node(char *w, bucket* current)
 	current->next->word = malloc(len);
 	strncpy(current->next->word, w, len);
 
+	current->next->next = 0;
 	current = current->next;
 }
