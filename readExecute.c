@@ -14,6 +14,8 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size);
 command_type get_command(char *c);
 FILE *get_file(char* filename);
 char *copy_str(char *input);
+char *copy(char *t);
+
 int main(int argc, char **argv)
 {
 	DIE(argc < 2, "Please enter the initial length of hashtable:\n");
@@ -95,8 +97,7 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				// file ouput is the 3rd argument, split again
 				
 				char *to_f = copy(token);
-				printf("%s\n", token);
-				printf("%s\n", to_f);
+
 				token = strtok( NULL, " ");
 				pFile_out = get_file(token);
 				
@@ -173,7 +174,7 @@ FILE *get_file(char* f)
 	return fp;
 }
 
-copy(char *t)
+char *copy(char *t)
 {
 	int len = strlen(t);
 	char *to_f = malloc(len);

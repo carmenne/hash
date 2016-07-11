@@ -95,7 +95,6 @@ bucket** resize_hash(char *type, bucket **hashtable, int size)
 	bucket **copy;
 	int index = 0;
 	int new_size = 0;
-	printf("resize\n");
 	
 	if (strcmp(type, "double") == 0)
 		new_size = 2 * size;
@@ -140,21 +139,22 @@ void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 		if (hashtable[index])
 		{
 			print_bucket(index, hashtable, fp);
-			// fputs("\n", fp);
 		}
 		index++;
 	}
+		fputs("\n", fp);
 }
 void print_bucket(int index, bucket **hashtable, FILE *fp)
 {
 		if (hashtable[index])
 		{
 			bucket *current = hashtable[index];
-			while(current) {
+			while(current->next) {
 				fputs(current->word, fp);
 				fputs(" ", fp);
 				current = current->next;
 			}
+			fputs(current->word, fp);
 		}
 		fputs("\n", fp);
 		fflush(fp);
