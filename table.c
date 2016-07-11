@@ -17,11 +17,12 @@ bucket **create_hashtable(unsigned int size) {
 void add_hash(char *token, bucket **hashtable, unsigned int size)
 {
 	unsigned int index = hash(token, size);
+	// printf("Token: %s\n", token);
 	
 	if (!hashtable[index]) {
 		hashtable[index] = create_bucket(token);
 	} else {
-	
+		// printf("Token: %s\n", token);
 		bucket *current = hashtable[index];
 		
 		// go to the last node
@@ -41,15 +42,32 @@ void remove_hash(char *token, bucket **hashtable, unsigned int size)
 	if (!hashtable[index])
 		return;
 	
-	bucket *current = hashtable[index];
-	while(current) {
-		if(strcmp(token, current->word) == 0) {
-			
+	
+	bucket *tmp;
+	
+	
+	if (strcmp(hashtable[index]->word, token) == 0) {
+		// This  is the first word in the bucket
+		tmp = hashtable[index]->next;
+		free(hashtable[index]);
+		hashtable[index]=tmp;
+	} else {
+
+		bucket *current = hashtable[index];
+		while(current->next !=NULL) {
+			if (strcmp(current->next->word, token) == 0){
+				tmp = current->next->next;
+				free(current->next);
+				current->next = tmp;
+				return;
+			}else {
+				current = current->next;
+			}
 		}
-			
-		current = current->next;
 	}
+	
 }
+
 void clear_hash(bucket **hashtable)
 {
 

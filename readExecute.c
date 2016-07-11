@@ -57,21 +57,21 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 
 		char *token = strtok(clean_line, " ");
 		DIE (!token, "Invalid command.\n");
+		// printf("Command:%s\n", token);
 		
 		command_type command = get_command(token);
-
+		
 		token = strtok(NULL, " ");
+		// printf("Param:%s\n", token);
 		
 		switch(command) {
 			case ADD :
 				DIE (!token, "Please provide the word to be added.\n");
-				
 				add_hash(token, hashtable, size);
 				break;
 			
 			case REMOVE :
 				DIE (!token, "Please provide the word to be removed.\n");			
-				
 				remove_hash(token, hashtable, size);
 				break;
 			
@@ -92,19 +92,17 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				
 				find_hash(token, hashtable, size, pFile_out);
 				
-				fclose(pFile_out);
 				break;
 			
 			case PRINT :
 				// file ouput is the 2nd argument (already splitted)
-			
+
 				pFile_out = get_file(token);
 				
 				DIE(!pFile_out, "Error with writing to file or stdout");
 				
 				print_hash(hashtable, pFile_out, size);
 								
-				fclose(pFile_out);
 				break;
 				
 			case PRINT_BUCKET :
@@ -122,10 +120,13 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 				
 				print_bucket(index, hashtable, pFile_out);
 				
-				fclose(pFile_out);
-				break;	
+				break;
+				
+			default:
+			continue;	
 		}
-}
+	}
+	fclose(pFile_out);
 }
 
 command_type get_command(char *c)
