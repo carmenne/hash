@@ -50,12 +50,10 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 {
 	char command_name[COMMAND_SIZE];
 	FILE *pFile_out;
-
-	DIE(!pFile, "Error with input file");
 	
 	while(fgets(command_name, COMMAND_SIZE , pFile)) {
 	
-		char *clean_line = strtok(command_name, "\n");
+		char *clean_line = strtok(command_name, "\r\n");
 
 		char *token = strtok(clean_line, " ");
 		DIE (!token, "Invalid command.\n");

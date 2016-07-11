@@ -29,26 +29,41 @@ void add_hash(char *token, bucket **hashtable, unsigned int size)
 			current = current->next;
 		}
 		
-		// TO DO : Check that the word is not present already
-		add_node(token, current);
+		if (is_present(token, hashtable, size) == 0)
+			add_node(token, current);
 	}
 	
 }
 void remove_hash(char *token, bucket **hashtable, unsigned int size)
 {
+	unsigned int index = hash(token, size);
 	
+	if (!hashtable[index])
+		return;
+	
+	bucket *current = hashtable[index];
+	while(current) {
+		if(strcmp(token, current->word) == 0) {
+			
+		}
+			
+		current = current->next;
+	}
 }
 void clear_hash(bucket **hashtable)
 {
-	
+
 }
 void resize_hash(char *type, bucket **hashtable)
 {
 	
 }
-void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *pFile_out)
+void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *fp)
 {
-	
+	if (is_present(token, hashtable, size) == 0)
+		fputs("False\n", fp);
+	else
+		fputs("True\n", fp);
 }
 void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 {
@@ -101,4 +116,22 @@ void add_node(char *w, bucket* current)
 
 	current->next->next = 0;
 	current = current->next;
+}
+
+int is_present(char *w, bucket **hashtable, unsigned int size)
+{
+	unsigned int index = hash(w, size);
+	
+	if (!hashtable[index])
+		return 0;
+	
+	bucket *current = hashtable[index];
+	while(current) {
+		if(strcmp(w, current->word) == 0)
+			return 1;
+			
+		current = current->next;
+	}
+
+	return 0;
 }
