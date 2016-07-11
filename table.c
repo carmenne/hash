@@ -50,7 +50,7 @@ void find_hash(char *token, bucket **hashtable, unsigned int size, FILE *pFile_o
 {
 	
 }
-void print_hash(bucket **hashtable, FILE *pFile_out, unsigned int size)
+void print_hash(bucket **hashtable, FILE *fp, unsigned int size)
 {
 	int index = 0;
 
@@ -58,24 +58,23 @@ void print_hash(bucket **hashtable, FILE *pFile_out, unsigned int size)
 	{
 		if (hashtable[index])
 		{
-			print_bucket(index, hashtable, pFile_out);
+			print_bucket(index, hashtable, fp);
+			fputs("\n", fp);
 		}
 		index++;
 	}
 }
-void print_bucket(int index, bucket **hashtable, FILE *pFile)
+void print_bucket(int index, bucket **hashtable, FILE *fp)
 {
 		if (hashtable[index])
 		{
 			bucket *current = hashtable[index];
 			while(current) {
-				fputs(current->word, pFile);
-				fputs(" ", pFile);
+				fputs(current->word, fp);
+				fputs(" ", fp);
 				current = current->next;
 			}
-			fputs("\n", pFile);
 		}
-		
 }
 
 // Helper functions

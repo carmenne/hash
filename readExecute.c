@@ -55,7 +55,9 @@ void execute_command(FILE *pFile, bucket **hashtable, unsigned int size)
 	
 	while(fgets(command_name, COMMAND_SIZE , pFile)) {
 	
-		char *token = strtok(command_name, " \n");
+		char *clean_line = strtok(command_name, "\n");
+
+		char *token = strtok(clean_line, " ");
 		DIE (!token, "Invalid command.\n");
 		
 		command_type command = get_command(token);
